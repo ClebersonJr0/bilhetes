@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carta de Presente</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Inter', 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.08)"/><circle cx="10" cy="60" r="0.8" fill="rgba(255,255,255,0.06)"/><circle cx="90" cy="30" r="0.6" fill="rgba(255,255,255,0.04)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .letter-card {
+            background: rgba(30, 30, 50, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 50px;
+            margin: 20px;
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .letter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+        }
+
+        .letter-card.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .letter-content {
+            font-size: 1.3em;
+            line-height: 1.9;
+            color: #e2e8f0;
+            text-align: justify;
+            white-space: pre-line;
+            font-weight: 400;
+            letter-spacing: 0.2px;
+        }
+
+        .error-message {
+            text-align: center;
+            color: #fc8181;
+            font-size: 1.2em;
+            padding: 50px;
+            background: rgba(30, 30, 50, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            margin: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .progress-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid rgba(129, 140, 248, 0.9);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .letter-card {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .letter-content {
+                font-size: 1.1em;
+                line-height: 1.7;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .letter-card {
+                padding: 20px;
+                margin: 5px;
+            }
+            
+            .letter-content {
+                font-size: 1em;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loading" class="loading">
+            <div class="progress-spinner"></div>
+        </div>
+        
+        <div id="letter-container" style="display: none;">
+            <div class="letter-card" id="letter-card">
+                <div class="letter-content" id="letter-content">
+                    <!-- Conteúdo da carta será inserido aqui -->
+                </div>
+            </div>
+        </div>
+        
+        <div id="error-container" class="error-message" style="display: none;">
+            <h2>Ops! Carta não encontrada</h2>
+            <p>Não foi possível encontrar a carta solicitada. Verifique se o link está correto.</p>
+        </div>
+    </div>
+
+    <script>
+        // Dados das cartas (simulando arquivo JSON)
+        const lettersData = {
+            "letters": {
+                "1": "Oi, Erica. $greeting ❤️🙂\nEu poderia simplesmente te comprar um presente e pronto, mas isso não teria graça nenhuma, nem carinho. Quis fazer diferente.\n\nPassei um tempo pensando no que poderia te fazer sorrir, no que combina com você, nos momentos que a gente já compartilhou… e foi assim que surgiram esses bilhetes. Cada um deles foi escrito pensando em você, no que você sente, no que pode precisar ouvir.\n\nEspero que você se divirta lendo cada bilhete e que eles tragam um pouquinho de alegria para o seu dia, porque cada palavra aqui tem um pedacinho do meu carinho por você.\n\nFeliz aniversário! Parabéns pelos seus 28 anos! 🎉\n\nConte comigo sempre que precisar. 🤍",
+                "2": "$greeting, Erica! 🥳\nUau… parabéns por essa conquista! Hoje, $day de $month de $year, você brilhou de verdade. 😮‍💨\n\nSabe, quando escrevi isso em 26 de setembro de 2025, eu não fazia ideia de qual seria a sua conquista, mas tinha certeza de que você iria conseguir. E olha só… você conseguiu! Fico realmente feliz só de imaginar, e se você quiser compartilhar comigo, eu vou adorar saber todos os detalhes. 😄\n\nE o mais incrível é que ainda faltam $endoftheyearindays dias para o fim de $year — ou seja, dia após dia você tem novas oportunidades de fazer coisas incríveis, uma por dia, criando momentos que vão te deixar orgulhosa. 🙃🤍\n\nAproveita cada segundo desta vitória, sente orgulho do quanto você é capaz e guarda essa energia boa para cada nova conquista que vem por aí.\n\nVocê merece toda a alegria que está sentindo hoje! Parabéns de coração! 🎈🫶🏻",
+                "3": "Oi, Erica 🫂\nSe hoje parece que o relógio parou e você não sabe bem por quê, pense que é só mais uma $weekday. Vai passar, como tudo passa.\n\nRespira fundo, deixa a cabeça descansar por um instante, e lembra que momentos ruins também têm um fim. Mesmo que pareça pesado agora, você é forte e incrível, e vai atravessar isso.\n\nSe quiser, me chama para conversar ou só desabafar. Eu estou aqui pra ouvir, sem pressa, sem julgamentos.\n\nCuida de você hoje, e permita-se sentir sem se cobrar. 💛",
+                "4": "$greeting, Erica! 🙂\nTambém estou com saudades!\n\nJá são $hour:$minute, e saiba que também pensei em você desde que o dia amanheceu.\n\nEspero que seu dia tenha sido tão legal quanto um dos episódios de Solar Opposites que você assiste antes de dormir!\n\nSaiba que sua notificação sempre me faz sorrir, então não precisa pensar duas vezes antes de me mandar uma mensagem.\n\nÀs vezes me pego pensando: se a gente se falasse mais, eu também não sentiria tanta saudade 🥲\n\nMe manda um \"Oi\" quando puder.\n\nBeijos 😚",
+                "5": "$greeting, Erica 😘\nSei que, às vezes, de $partOfDay, parece que o relógio tirou férias e nem os minutos mudam. Parece que $hourh é para sempre.\n\nMas lembra: cada segundo que passa tem um pedacinho de você, e você precisa aproveitar isso.\n\nMesmo que esta $weekday pareça não acabar nunca e você esteja entediada, ainda temos $endoftheyearindays dias para transformar tédio em risadas! E você pode contar comigo sempre! ❤️",
+                "6": "Oi, Erica, respira 😤\nNão sei nem se devo te desejar '$greeting' 🤣🫶🏻\n\nLogo numa $weekday e conseguiu alguém para te estressar? Que sorte hein...\n\nTenta respirar, relaxa, lembra que a raiva passa, mas as palavras ficam. Conta até 10, coloca uma música que você gosta e tenta esquecer os problemas.\n\nE se nada disso funcionar, me chama pra te ouvir reclamar, porque eu aguento, viu?",
+                "7": "Calma, Erica, relaxa!\nNinguém tem todas as respostas do mundo, você só tem $age.\n\nO futuro se constrói passo a passo, igual um livro. Pra que tanta ansiedade?\n\nO tempo passa muitoooo rápido. $year vai passar voando, restam apenas $endoftheyearinmonth meses e já era! \n\nViva, crie memórias, aproveite um dia de cada vez e se preocupe menos com o futuro!\n\nAmo você ❤️",
+                "8": "Oi Erica. $greeting ❤️\nEu sei que às vezes, no meio da $partOfDay, a gente olha no espelho e duvida de si mesma.\n\nMas lembra: você já viveu $age anos cheios de histórias que só você poderia escrever.\n\nMesmo nessa $season, quando tudo parece estranho, seu jeito único é o que faz diferença.\n\nSe bateu insegurança agora, às $time, guarda isso: você é mais importante do que imagina. 🫶🏻",
+                "9": "Oi Erica. $greeting 🥱\nÀs vezes eu também perco o sono, fico rolando na cama pensando na vida e em tudo que não cabe na cabeça.\n\nSe isso aconteceu com você hoje, respira fundo e lembra que não tá sozinha nessa $partOfDay silenciosa.\n\nE se o sono não vier, vai que é o universo te chamando pra pegar a moto, subir no Cristo e curtir as estrelas 💫\n\nSe quiser, pode até me chamar… quem sabe eu também tô acordado. 😉",
+                "10": "$greeting, Erica 😚\nSe bateu aquele frio na barriga nesta $partOfDay, lembra que você já resolveu tantos problemas, até aqueles que nem eram seus 👀\n\nVocê enfrentou $age anos cheios de desafios e saiu mais forte de cada um.\n\nEntão respira fundo e lembra: você consegue muito mais do que imagina. Mas não precisa ser forte o tempo todo!\n\nSe quiser companhia nessa, me chama… sempre tô aqui pra te dar força (ou um abraço, para te apoiar)!",
+                "11": "$greeting, Erica 😅\nSe hoje parece que o mundo inteiro tá nas suas costas, lembra do que você me ensinou: às vezes é só dar um grito bem forte lá no Cristo para soltar todas as energias.\n\nNo dia eu não gritei junto, mas se agora você sentir que precisa de um apoio, pode contar comigo — vou junto com você.\n\nRespira fundo, sente a $season ao redor e lembra que você não precisa carregar tudo sozinha.\n\nSeu jeito incrível já enfrentou $age anos de desafios, então confia: você é mais forte do que imagina.",
+                "12": "$greeting, Erica 🙃\nSe hoje você estiver se sentindo meio apagada, lembra o quanto você é amada na oficina e como todos que te conhecem gostam de você. ❤️\n\nA quantidade de pessoas que gostam de você é enorme, e eu não poderia deixar de te lembrar o quão especial você é pra mim! 🫶🏻\n\nSe precisar de alguém pra conversar, pode me chamar — eu adoro quando você deita no meu peito e conversa comigo. 🗣️🤍"
+           }
+        };
+
+        // Função para obter variáveis de tempo
+        function getTimeVariables() {
+            const now = new Date();
+            
+            const months = [
+                'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+                'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+            ];
+            
+            const weekdays = [
+                'domingo', 'segunda-feira', 'terça-feira', 'quarta-feira',
+                'quinta-feira', 'sexta-feira', 'sábado'
+            ];
+            
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const day = now.getDate();
+            const month = months[now.getMonth()];
+            const weekday = weekdays[now.getDay()];
+            const year = now.getFullYear();
+            
+            // Determinar parte do dia
+            let partOfDay;
+            let greeting;
+            if (hour >= 5 && hour < 12) {
+                partOfDay = 'manhã';
+                greeting = 'Bom dia';
+            } else if (hour >= 12 && hour < 18) {
+                partOfDay = 'tarde';
+                greeting = 'Boa tarde';
+            } else {
+                partOfDay = 'noite';
+                greeting = 'Boa noite';
+            }
+            
+            // Determinar estação do ano (hemisfério sul)
+            let season;
+            const monthNum = now.getMonth() + 1;
+            if (monthNum === 12 || monthNum <= 2) {
+                season = 'verão';
+            } else if (monthNum >= 3 && monthNum <= 5) {
+                season = 'outono';
+            } else if (monthNum >= 6 && monthNum <= 8) {
+                season = 'inverno';
+            } else {
+                season = 'primavera';
+            }
+            
+            // Calcular idade (nascimento: 30/09/1997)
+            const birthDate = new Date(1997, 8, 30); // 30 de setembro de 1997
+            let age = year - 1997;
+            
+            // Verificar se já fez aniversário este ano
+            const birthdayThisYear = new Date(year, 8, 30);
+            if (now < birthdayThisYear) {
+                age--; // Ainda não fez aniversário este ano
+            }
+            
+
+            
+            // Calcular dias até o fim do ano
+            const endOfYear = new Date(year, 11, 31); // 31 de dezembro
+            const endOfYearInDays = Math.ceil((endOfYear - now) / (1000 * 60 * 60 * 24));
+            
+            // Calcular meses até o fim do ano
+            const currentMonth = now.getMonth() + 1;
+            const endOfYearInMonths = 12 - currentMonth;
+            
+            return {
+                '$time': `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
+                '$hour': hour.toString().padStart(2, '0'),
+                '$minute': minute.toString().padStart(2, '0'),
+                '$day': day.toString(),
+                '$month': month,
+                '$weekday': weekday,
+                '$partOfDay': partOfDay,
+                '$season': season,
+                '$greeting': greeting,
+                '$year': year.toString(),
+                '$endoftheyearindays': endOfYearInDays.toString(),
+                '$endoftheyearinmonth': endOfYearInMonths.toString(),
+                '$age': `${age} anos`
+            };
+        }
+
+        // Função para substituir variáveis no texto
+        function replaceVariables(text) {
+            const variables = getTimeVariables();
+            let result = text;
+            
+            for (const [variable, value] of Object.entries(variables)) {
+                result = result.replace(new RegExp('\\' + variable, 'g'), value);
+            }
+            
+            return result;
+        }
+
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        function showLetter(letterId) {
+            const loadingElement = document.getElementById('loading');
+            const letterContainer = document.getElementById('letter-container');
+            const errorContainer = document.getElementById('error-container');
+            const letterContent = document.getElementById('letter-content');
+            const letterCard = document.getElementById('letter-card');
+
+            // Simula um pequeno delay de carregamento para melhor UX
+            setTimeout(() => {
+                loadingElement.style.display = 'none';
+
+                if (lettersData.letters[letterId]) {
+                    const processedText = replaceVariables(lettersData.letters[letterId]);
+                    letterContent.textContent = processedText;
+                    letterContainer.style.display = 'block';
+                    
+                    // Animação de fade-in
+                    setTimeout(() => {
+                        letterCard.classList.add('show');
+                    }, 100);
+                } else {
+                    errorContainer.style.display = 'block';
+                }
+            }, 800);
+        }
+
+        // Inicialização quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            const letterId = getUrlParameter('id');
+            
+            if (letterId) {
+                showLetter(letterId);
+            } else {
+                // Se não há ID, mostra erro
+                showLetter(1);
+            }
+        });
+
+        // Adiciona fonte do Google Fonts
+        const link = document.createElement('link');
+        link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap';
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'984eed88e508f1af',t:'MTc1ODg0OTUxMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
