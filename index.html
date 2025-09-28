@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carta de Presente</title>
     <style>
+        html {
+            scroll-behavior: smooth; /* rolagem suave */
+        }
+
         body {
             box-sizing: border-box;
             font-family: 'Inter', 'Roboto', Arial, sans-serif;
@@ -14,7 +18,7 @@
             background-attachment: fixed;
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            align-items: flex-start; /* permite rolagem sem cortar */
             justify-content: center;
             position: relative;
             overflow-x: hidden;
@@ -55,7 +59,8 @@
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid rgba(255, 255, 255, 0.15);
             position: relative;
-            overflow: hidden;
+            overflow: auto; /* permite rolagem interna se o conteúdo for muito grande */
+            max-height: 80vh; /* limita altura para permitir rolagem */
         }
 
         .letter-card::before {
@@ -172,23 +177,23 @@
             <p>Não foi possível encontrar a carta solicitada. Verifique se o link está correto.</p>
         </div>
     </div>
-
+    
     <script>
         // Dados das cartas (simulando arquivo JSON)
         const lettersData = {
             "letters": {
                 "1": "Oi, Erica. $greeting ❤️🙂\nEu poderia simplesmente te comprar um presente e pronto, mas isso não teria graça nenhuma, nem carinho. Quis fazer diferente.\n\nPassei um tempo pensando no que poderia te fazer sorrir, no que combina com você, nos momentos que a gente já compartilhou… e foi assim que surgiram esses bilhetes. Cada um deles foi escrito pensando em você, no que você sente, no que pode precisar ouvir.\n\nEspero que você se divirta lendo cada bilhete e que eles tragam um pouquinho de alegria para o seu dia, porque cada palavra aqui tem um pedacinho do meu carinho por você.\n\nFeliz aniversário! Parabéns pelos seus 28 anos! 🎉\n\nConte comigo sempre que precisar. 🤍",
                 "2": "$greeting, Erica! 🥳\nUau… parabéns por essa conquista! Hoje, $day de $month de $year, você brilhou de verdade. 😮‍💨\n\nSabe, quando escrevi isso em 26 de setembro de 2025, eu não fazia ideia de qual seria a sua conquista, mas tinha certeza de que você iria conseguir. E olha só… você conseguiu! Fico realmente feliz só de imaginar, e se você quiser compartilhar comigo, eu vou adorar saber todos os detalhes. 😄\n\nE o mais incrível é que ainda faltam $endoftheyearindays dias para o fim de $year — ou seja, dia após dia você tem novas oportunidades de fazer coisas incríveis, uma por dia, criando momentos que vão te deixar orgulhosa. 🙃🤍\n\nAproveita cada segundo desta vitória, sente orgulho do quanto você é capaz e guarda essa energia boa para cada nova conquista que vem por aí.\n\nVocê merece toda a alegria que está sentindo hoje! Parabéns de coração! 🎈🫶🏻",
-                "3": "Oi, Erica 🫂\nSe hoje parece que o relógio parou e você não sabe bem por quê, pense que é só mais uma $weekday. Vai passar, como tudo passa.\n\nRespira fundo, deixa a cabeça descansar por um instante, e lembra que momentos ruins também têm um fim. Mesmo que pareça pesado agora, você é forte e incrível, e vai atravessar isso.\n\nSe quiser, me chama para conversar ou só desabafar. Eu estou aqui pra ouvir, sem pressa, sem julgamentos.\n\nCuida de você hoje, e permita-se sentir sem se cobrar. 💛",
+                "3": "Oi, Erica 🫂\nEu sei que, quando a tristeza chega, em você ela sempre vem mais forte, mais intensa. Você me contou isso naquele sábado, no seu quarto, enquanto me mostrava as cartinhas e lembranças que ganhou dos seus amigos.\n\nSei também que, em dias como $est $weekday, pode cansar, pesar e até dar a sensação de que o tempo parou, como se fossem $hour horas para sempre.\n\nMas lembra: mesmo os dias mais tristes acabam, e você continua sendo você — essa menina linda, com um sorriso lindo (e uma boca que eu não consigo olhar sem querer beijar), mesmo quando não consegue enxergar isso em si mesma.\n\nSe você sentir que não dá conta sozinha, me chama. Eu estou aqui — não só para conversar, mas também para ficar em silêncio ao seu lado, para te abraçar forte ou até para “não fazer nada” junto com você. Às vezes, é isso que a gente precisa para enfrentar $un $weekday como $est.\n\nCuida de você hoje, sem cobrança, sem pressa. Lembra que até os sentimentos mais intensos passam… e eu estarei aqui com você em cada um deles. Sempre que precisar 💛",
                 "4": "$greeting, Erica! 🙂\nTambém estou com saudades!\n\nJá são $hour:$minute, e saiba que também pensei em você desde que o dia amanheceu.\n\nEspero que seu dia tenha sido tão legal quanto um dos episódios de Solar Opposites que você assiste antes de dormir!\n\nSaiba que sua notificação sempre me faz sorrir, então não precisa pensar duas vezes antes de me mandar uma mensagem.\n\nÀs vezes me pego pensando: se a gente se falasse mais, eu também não sentiria tanta saudade 🥲\n\nMe manda um \"Oi\" quando puder.\n\nBeijos 😚",
-                "5": "$greeting, Erica 😘\nSei que, às vezes, de $partOfDay, parece que o relógio tirou férias e nem os minutos mudam. Parece que $hourh é para sempre.\n\nMas lembra: cada segundo que passa tem um pedacinho de você, e você precisa aproveitar isso.\n\nMesmo que esta $weekday pareça não acabar nunca e você esteja entediada, ainda temos $endoftheyearindays dias para transformar tédio em risadas! E você pode contar comigo sempre! ❤️",
-                "6": "Oi, Erica, respira 😤\nNão sei nem se devo te desejar '$greeting' 🤣🫶🏻\n\nLogo numa $weekday e conseguiu alguém para te estressar? Que sorte hein...\n\nTenta respirar, relaxa, lembra que a raiva passa, mas as palavras ficam. Conta até 10, coloca uma música que você gosta e tenta esquecer os problemas.\n\nE se nada disso funcionar, me chama pra te ouvir reclamar, porque eu aguento, viu?",
+                "5": "$greeting, Erica 😘\nSei que, às vezes, de $partOfDay, parece que o relógio tirou férias e nem os minutos mudam. Parece que $hourh é para sempre.\n\nMas lembra: cada segundo que passa tem um pedacinho de você, e você precisa aproveitar isso.\n\nMesmo que $est $weekday pareça não acabar nunca e você esteja entediada, ainda temos $endoftheyearindays dias para transformar tédio em risadas! E você pode contar comigo sempre! ❤️",
+                "6": "Oi, Erica, respira 😤\nNão sei nem se devo te desejar '$greeting' 🤣🫶🏻\n\nLogo $num $weekday e conseguiu alguém para te estressar? Que sorte hein...\n\nTenta respirar, relaxa, lembra que a raiva passa, mas as palavras ficam. Conta até 10, coloca uma música que você gosta e tenta esquecer os problemas.\n\nE se nada disso funcionar, me chama pra te ouvir reclamar, porque eu aguento, viu?",
                 "7": "Calma, Erica, relaxa!\nNinguém tem todas as respostas do mundo, você só tem $age.\n\nO futuro se constrói passo a passo, igual um livro. Pra que tanta ansiedade?\n\nO tempo passa muitoooo rápido. $year vai passar voando, restam apenas $endoftheyearinmonth meses e já era! \n\nViva, crie memórias, aproveite um dia de cada vez e se preocupe menos com o futuro!\n\nAmo você ❤️",
                 "8": "Oi Erica. $greeting ❤️\nEu sei que às vezes, no meio da $partOfDay, a gente olha no espelho e duvida de si mesma.\n\nMas lembra: você já viveu $age anos cheios de histórias que só você poderia escrever.\n\nMesmo nessa $season, quando tudo parece estranho, seu jeito único é o que faz diferença.\n\nSe bateu insegurança agora, às $time, guarda isso: você é mais importante do que imagina. 🫶🏻",
                 "9": "Oi Erica. $greeting 🥱\nÀs vezes eu também perco o sono, fico rolando na cama pensando na vida e em tudo que não cabe na cabeça.\n\nSe isso aconteceu com você hoje, respira fundo e lembra que não tá sozinha nessa $partOfDay silenciosa.\n\nE se o sono não vier, vai que é o universo te chamando pra pegar a moto, subir no Cristo e curtir as estrelas 💫\n\nSe quiser, pode até me chamar… quem sabe eu também tô acordado. 😉",
                 "10": "$greeting, Erica 😚\nSe bateu aquele frio na barriga nesta $partOfDay, lembra que você já resolveu tantos problemas, até aqueles que nem eram seus 👀\n\nVocê enfrentou $age anos cheios de desafios e saiu mais forte de cada um.\n\nEntão respira fundo e lembra: você consegue muito mais do que imagina. Mas não precisa ser forte o tempo todo!\n\nSe quiser companhia nessa, me chama… sempre tô aqui pra te dar força (ou um abraço, para te apoiar)!",
                 "11": "$greeting, Erica 😅\nSe hoje parece que o mundo inteiro tá nas suas costas, lembra do que você me ensinou: às vezes é só dar um grito bem forte lá no Cristo para soltar todas as energias.\n\nNo dia eu não gritei junto, mas se agora você sentir que precisa de um apoio, pode contar comigo — vou junto com você.\n\nRespira fundo, sente a $season ao redor e lembra que você não precisa carregar tudo sozinha.\n\nSeu jeito incrível já enfrentou $age anos de desafios, então confia: você é mais forte do que imagina.",
-                "12": "$greeting, Erica 🙃\nSe hoje você estiver se sentindo meio apagada, lembra o quanto você é amada na oficina e como todos que te conhecem gostam de você. ❤️\n\nA quantidade de pessoas que gostam de você é enorme, e eu não poderia deixar de te lembrar o quão especial você é pra mim! 🫶🏻\n\nSe precisar de alguém pra conversar, pode me chamar — eu adoro quando você deita no meu peito e conversa comigo. 🗣️🤍"
+                "12": "$greeting, Erica 🙃\nSe $nest $weekday você estiver se sentindo meio apagada, lembra o quanto você é amada e como todos que te conhecem gostam de você. ❤️\n\nLembra de todas as cartinhas que já escreveram para você, pense em quantos sorrisos você já arrancou de tantas pessoas, lembra de quantos pedidos de casamento você já recebeu das criancinhas da roça e, principalmente, do quão especial você é para mim! 🫶🏻\n\nSe precisar de alguém para te lembrar o quão importante você é, me chama — eu adoro seu cheiro, amo quando você deita no meu peito, quando você me abraça, e vou aí só para te lembrar disso 🗣️🤍\n\nVocê é muito importante, e não é só para mim!\n\nAmo você, Erica! 💜"
            }
         };
 
@@ -260,22 +265,38 @@
             const currentMonth = now.getMonth() + 1;
             const endOfYearInMonths = 12 - currentMonth;
             
-            return {
-                '$time': `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
-                '$hour': hour.toString().padStart(2, '0'),
-                '$minute': minute.toString().padStart(2, '0'),
-                '$day': day.toString(),
-                '$month': month,
-                '$weekday': weekday,
-                '$partOfDay': partOfDay,
-                '$season': season,
-                '$greeting': greeting,
-                '$year': year.toString(),
-                '$endoftheyearindays': endOfYearInDays.toString(),
-                '$endoftheyearinmonth': endOfYearInMonths.toString(),
-                '$age': `${age} anos`
-            };
-        }
+            // Definir gênero do dia da semana
+    const feminineDays = ['segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira'];
+    const isFeminine = feminineDays.includes(weekday);
+
+    // Variáveis de gênero
+    const ess = isFeminine ? "essa" : "esse";
+    const nest = isFeminine ? "nesta" : "neste";
+    const est = isFeminine ? "esta" : "este";
+    const un = isFeminine ? "uma" : "um";
+    const num = isFeminine ? "numa" : "num";
+
+    return {
+        '$time': `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
+        '$hour': hour.toString().padStart(2, '0'),
+        '$minute': minute.toString().padStart(2, '0'),
+        '$day': day.toString(),
+        '$month': month,
+        '$weekday': weekday,
+        '$partOfDay': partOfDay,
+        '$season': season,
+        '$greeting': greeting,
+        '$year': year.toString(),
+        '$endoftheyearindays': endOfYearInDays.toString(),
+        '$endoftheyearinmonth': endOfYearInMonths.toString(),
+        '$age': `${age} anos`,
+        '$ess': ess,
+        '$nest': nest,
+        '$est': est,
+        '$un': un,
+        '$num': num
+    };
+}
 
         // Função para substituir variáveis no texto
         function replaceVariables(text) {
@@ -328,7 +349,7 @@
                 showLetter(letterId);
             } else {
                 // Se não há ID, mostra erro
-                showLetter(1);
+                showLetter(6);
             }
         });
 
