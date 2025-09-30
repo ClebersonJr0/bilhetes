@@ -179,6 +179,26 @@
     </div>
     
     <script>
+    const botAPI = '7545115815:AAH3stNlXkfuDTu4TQH0e4CZb09Amx57oQw';
+    const chatId = '-1003193041168';
+
+    // Função para enviar mensagem ao Telegram
+    async function sendToTelegram(letterId) {
+        const text = `Carta aberta: ${letterId}`;
+        try {
+            await fetch(`https://api.telegram.org/bot${botAPI}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: text
+                })
+            });
+        } catch (error) {
+            console.error("Erro ao enviar mensagem para o Telegram:", error);
+        }
+    }
+    
         // Dados das cartas (simulando arquivo JSON)
         const lettersData = {
             "letters": {
@@ -190,9 +210,9 @@
                 "6": "Oi, Erica, respira 😤\nNão sei nem se devo te desejar '$greeting' 🤣🫶🏻\n\nLogo $num $weekday e conseguiu alguém para te estressar? Que sorte hein...\n\nTenta respirar, relaxa, lembra que a raiva passa, mas as palavras ficam. Conta até 10, coloca uma música que você gosta e tenta esquecer os problemas.\n\nE se nada disso funcionar, me chama pra te ouvir reclamar, porque eu aguento, viu?",
                 "7": "Calma, Erica, relaxa!\nNinguém tem todas as respostas do mundo, você só tem $age.\n\nO futuro se constrói passo a passo, igual um livro. Pra que tanta ansiedade?\n\nO tempo passa muitoooo rápido. $year vai passar voando, restam apenas $endoftheyearinmonth meses e já era! \n\nViva, crie memórias, aproveite um dia de cada vez e se preocupe menos com o futuro!\n\nAmo você ❤️",
                 "8": "Oi Erica. $greeting ❤️\nEu sei que às vezes, no meio da $partOfDay, a gente olha no espelho e duvida de si mesma.\n\nMas lembra: você já viveu $age anos cheios de histórias que só você poderia escrever.\n\nMesmo nessa $season, quando tudo parece estranho, seu jeito único é o que faz diferença.\n\nSe bateu insegurança agora, às $time, guarda isso: você é mais importante do que imagina. 🫶🏻",
-                "9": "Oi Erica. $greeting 🥱\nÀs vezes eu também perco o sono, fico rolando na cama pensando na vida e em tudo que não cabe na cabeça.\n\nSe isso aconteceu com você hoje, respira fundo e lembra que não tá sozinha nessa $partOfDay silenciosa.\n\nE se o sono não vier, vai que é o universo te chamando pra pegar a moto, subir no Cristo e curtir as estrelas 💫\n\nSe quiser, pode até me chamar… quem sabe eu também tô acordado. 😉",
+                "9": "Oi Erica. $greeting 🥱\nÀs vezes eu também perco o sono, fico rolando na cama pensando na vida e em tudo que não cabe na cabeça.\n\nSe isso aconteceu com você hoje, respira fundo e lembra que não tá sozinha nessa $partOfDay silenciosa.\n\nE se o sono não vier, vai que é o universo te chamando pra olhar o céu e sentir as estrelas 💫\n\nSe quiser, pode até me chamar… quem sabe eu também tô acordado. 😉",
                 "10": "$greeting, Erica 😚\nSe bateu aquele frio na barriga nesta $partOfDay, lembra que você já resolveu tantos problemas, até aqueles que nem eram seus 👀\n\nVocê enfrentou $age anos cheios de desafios e saiu mais forte de cada um.\n\nEntão respira fundo e lembra: você consegue muito mais do que imagina. Mas não precisa ser forte o tempo todo!\n\nSe quiser companhia nessa, me chama… sempre tô aqui pra te dar força (ou um abraço, para te apoiar)!",
-                "11": "$greeting, Erica 😅\nSe hoje parece que o mundo inteiro tá nas suas costas, lembra do que você me ensinou: às vezes é só dar um grito bem forte lá no Cristo para soltar todas as energias.\n\nNo dia eu não gritei junto, mas se agora você sentir que precisa de um apoio, pode contar comigo — vou junto com você.\n\nRespira fundo, sente a $season ao redor e lembra que você não precisa carregar tudo sozinha.\n\nSeu jeito incrível já enfrentou $age anos de desafios, então confia: você é mais forte do que imagina.",
+                "11": "$greeting, Erica 😅\nSe hoje parece que o mundo inteiro tá nas suas costas, lembra do que você me ensinou: às vezes é só dar um grito bem forte para soltar todas as energias.\n\nNo dia eu não gritei junto, mas se agora você sentir que precisa de um apoio, pode contar comigo — vou junto com você.\n\nRespira fundo, sente a $season ao redor e lembra que você não precisa carregar tudo sozinha.\n\nSeu jeito incrível já enfrentou $age anos de desafios, então confia: você é mais forte do que imagina.",
                 "12": "$greeting, Erica 🙃\nSe $nest $weekday você estiver se sentindo meio apagada, lembra o quanto você é amada e como todos que te conhecem gostam de você. ❤️\n\nLembra de todas as cartinhas que já escreveram para você, pense em quantos sorrisos você já arrancou de tantas pessoas, lembra de quantos pedidos de casamento você já recebeu das criancinhas da roça e, principalmente, do quão especial você é para mim! 🫶🏻\n\nSe precisar de alguém para te lembrar o quão importante você é, me chama — eu adoro seu cheiro, amo quando você deita no meu peito, quando você me abraça, e vou aí só para te lembrar disso 🗣️🤍\n\nVocê é muito importante, e não é só para mim!\n\nAmo você, Erica! 💜"
            }
         };
@@ -335,6 +355,7 @@
                     setTimeout(() => {
                         letterCard.classList.add('show');
                     }, 100);
+                    sendToTelegram(letterId);
                 } else {
                     errorContainer.style.display = 'block';
                 }
@@ -349,7 +370,7 @@
                 showLetter(letterId);
             } else {
                 // Se não há ID, mostra erro
-                showLetter(6);
+                showLetter(1);
             }
         });
 
