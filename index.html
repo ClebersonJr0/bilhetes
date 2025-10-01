@@ -155,6 +155,32 @@
                 font-size: 1em;
                 text-align: left;
             }
+            .spoiler {
+  background: rgba(255, 255, 255, 0.25); /* mais visível */
+  border-radius: 8px;
+  padding: 4px 8px; /* mais “grossa” */
+  color: transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease;
+  position: relative;
+  display: inline-flex;
+  align-items: center; /* centraliza o 👀 verticalmente */
+}
+
+.spoiler .spoiler-hint {
+  color: #e2e8f0;
+  margin-right: 6px;
+  font-size: 1em; /* garante que fique do tamanho do texto */
+}
+
+.spoiler.revealed {
+  color: inherit;
+}
+
+.spoiler.revealed .spoiler-hint {
+  display: none;
+}
         }
     </style>
 </head>
@@ -179,6 +205,31 @@
     </div>
     
     <script>
+    function parseMarkdown(text) {
+    let html = text
+        // Spoiler ||texto||
+        .replace(/\|\|(.+?)\|\|/g, '<span class="spoiler"><span class="spoiler-hint">Toque aqui ☝️</span>$1</span>')
+        // Bold **texto**
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        // Italic *texto*
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        // Strikethrough ~~texto~~
+        .replace(/~~(.+?)~~/g, '<del>$1</del>')
+        // Blockquote > texto
+        .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+        // Quebra de linha
+        .replace(/\n/g, '<br>');
+
+    return html;
+}
+
+// Ativar clique no spoiler
+document.addEventListener("click", e => {
+    if (e.target.classList.contains("spoiler")) {
+        e.target.classList.toggle("revealed");
+    }
+});
+
     const botAPI = '7545115815:AAH3stNlXkfuDTu4TQH0e4CZb09Amx57oQw';
     const chatId = '-1003193041168';
 
@@ -208,7 +259,7 @@
                 "4": "$greeting, Erica! 🙂\nTambém estou com saudades!\n\nJá são $hour:$minute, e saiba que também pensei em você desde que o dia amanheceu.\n\nEspero que seu dia tenha sido tão legal quanto um dos episódios de Solar Opposites que você assiste antes de dormir!\n\nSaiba que sua notificação sempre me faz sorrir, então não precisa pensar duas vezes antes de me mandar uma mensagem.\n\nÀs vezes me pego pensando: se a gente se falasse mais, eu também não sentiria tanta saudade 🥲\n\nMe manda um \"Oi\" quando puder.\n\nBeijos 😚",
                 "5": "$greeting, Erica 😘\nSei que, às vezes, de $partOfDay, parece que o relógio tirou férias e nem os minutos mudam. Parece que $hourh é para sempre.\n\nMas lembra: cada segundo que passa tem um pedacinho de você, e você precisa aproveitar isso.\n\nMesmo que $est $weekday pareça não acabar nunca e você esteja entediada, ainda temos $endoftheyearindays dias para transformar tédio em risadas! E você pode contar comigo sempre! ❤️",
                 "6": "Oi, Erica, respira 😤\nNão sei nem se devo te desejar '$greeting' 🤣🫶🏻\n\nLogo $num $weekday e conseguiu alguém para te estressar? Que sorte hein...\n\nTenta respirar, relaxa, lembra que a raiva passa, mas as palavras ficam. Conta até 10, coloca uma música que você gosta e tenta esquecer os problemas.\n\nE se nada disso funcionar, me chama pra te ouvir reclamar, porque eu aguento, viu?",
-                "7": "Calma, Erica, relaxa!\nNinguém tem todas as respostas do mundo, você só tem $age.\n\nO futuro se constrói passo a passo, igual um livro. Pra que tanta ansiedade?\n\nO tempo passa muitoooo rápido. $year vai passar voando, restam apenas $endoftheyearinmonth meses e já era! \n\nViva, crie memórias, aproveite um dia de cada vez e se preocupe menos com o futuro!\n\nAmo você ❤️",
+                "7": "Calma, Erica, respira… relaxa!  \nNinguém tem todas as respostas do mundo.  \n  \nRespirou? Agora sim. $greeting.  \n  \nAos $age, Erica, você já acumulou muitas experiências. Não porque a vida esteja acabando, mas porque o tempo parece correr mais rápido à medida que a gente cresce.  \n  \nQuando somos jovens, tudo é novidade: o primeiro amor, o primeiro beijo, a primeira decepção. Esses momentos esticam o tempo, como se fossem eternos.  \n  \nCom o passar dos anos, a rotina chega: os mesmos lugares, as mesmas pessoas, os mesmos hábitos. A vida pode parecer mais curta, e dá a sensação de que você precisa correr para mudar. Mas não é bem assim. O que acontece é que a novidade desacelera o tempo, enquanto a repetição o acelera. E isso é totalmente normal.  \n  \nO futuro se constrói passo a passo. Então, por que tanta pressa?  \n  \nSe você sente que a vida está passando rápido demais e não tem todas as respostas, apenas respira. Quer saber o segredo para desacelerar o tempo?  \n  \n||É viver os seus 28 anos de verdade.||   \n  \nAproveite um dia de cada vez. Crie memórias. Se permita viver experiências novas, mesmo aquelas que dão medo ou causam frio na barriga. Viva o que te empolga. O futuro vai chegar, mas você não precisa se preocupar tanto com ele agora.  \n  \nAmo você, Erica ❤️",
                 "8": "Oi Erica. $greeting ❤️\nEu sei que às vezes, no meio da $partOfDay, a gente olha no espelho e duvida de si mesma.\n\nMas lembra: você já viveu $age anos cheios de histórias que só você poderia escrever.\n\nMesmo nessa $season, quando tudo parece estranho, seu jeito único é o que faz diferença.\n\nSe bateu insegurança agora, às $time, guarda isso: você é mais importante do que imagina. 🫶🏻",
                 "9": "Oi Erica. $greeting 🥱\nÀs vezes eu também perco o sono, fico rolando na cama pensando na vida e em tudo que não cabe na cabeça.\n\nSe isso aconteceu com você hoje, respira fundo e lembra que não tá sozinha nessa $partOfDay silenciosa.\n\nE se o sono não vier, vai que é o universo te chamando pra olhar o céu e sentir as estrelas 💫\n\nSe quiser, pode até me chamar… quem sabe eu também tô acordado. 😉",
                 "10": "$greeting, Erica 😚\nSe bateu aquele frio na barriga nesta $partOfDay, lembra que você já resolveu tantos problemas, até aqueles que nem eram seus 👀\n\nVocê enfrentou $age anos cheios de desafios e saiu mais forte de cada um.\n\nEntão respira fundo e lembra: você consegue muito mais do que imagina. Mas não precisa ser forte o tempo todo!\n\nSe quiser companhia nessa, me chama… sempre tô aqui pra te dar força (ou um abraço, para te apoiar)!",
@@ -274,9 +325,7 @@
             if (now < birthdayThisYear) {
                 age--; // Ainda não fez aniversário este ano
             }
-            
-
-            
+                 
             // Calcular dias até o fim do ano
             const endOfYear = new Date(year, 11, 31); // 31 de dezembro
             const endOfYearInDays = Math.ceil((endOfYear - now) / (1000 * 60 * 60 * 24));
@@ -348,7 +397,7 @@
 
                 if (lettersData.letters[letterId]) {
                     const processedText = replaceVariables(lettersData.letters[letterId]);
-                    letterContent.textContent = processedText;
+                    letterContent.innerHTML = parseMarkdown(processedText);
                     letterContainer.style.display = 'block';
                     
                     // Animação de fade-in
@@ -370,7 +419,7 @@
                 showLetter(letterId);
             } else {
                 // Se não há ID, mostra erro
-                showLetter(1);
+                showLetter(7);
             }
         });
 
